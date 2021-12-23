@@ -17,6 +17,11 @@ from models.product import Product
 from models.supplier import Supplier
 from fastapi import FastAPI
 
+# This `Body` function allows a variable to be treated as an object,
+# which enables it to be passed in a POST request as a JSON object.
+# The parameter "embed" is neccesary under reasons explicit on "embed".
+from fastapi import Body
+
 
 app = FastAPI()
 
@@ -50,3 +55,17 @@ async def get_product_with_ref(ref:str):
 @app.get("/supplier/{id}/product")
 async def get_suppliers_products(id: int, year:int, category:str, order: str = 'asc'):
     return {"query parameters": str(id)+' '+str(year)+' '+category+' '+order}
+
+# PATCH /supplier/name
+@app.patch("/supplier/name")
+async def patch_supplier_name(name: str = Body(...,embed=True)):
+    # we set embed=True so that I can pass the parameter 'name' as a JSON
+    return {"name in body": name}
+
+# POST /user/supplier
+# This takes both the supplier and the product as parameters for the POST request.
+# This takes an additional dummy parameter to show the incorporation of a variable
+# in the request.
+@app.post("/user/supplier")
+async def post_user_and_author(user: User, supplier: Supplier, dummy_param:str = Body(...,embed=True)):
+    return {'user': user, 'supplier': supplier, 'dummy_param': dummy_param}
