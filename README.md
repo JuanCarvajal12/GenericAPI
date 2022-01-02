@@ -9,3 +9,4 @@ So far, Here I show usage of:
 * Python types/typing/annotations
 * Pydantic models
 * Endpoints with adecuate labeling
+* Testing the endpoints and requests with Insomnia
