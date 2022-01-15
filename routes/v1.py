@@ -12,14 +12,14 @@ I want with python as long as I return an appropriate result.
 """
 
 #%---
-from fastapi.param_functions import Header
+from models.jwt_user import JWTUser
 from models.user import User
 from models.product import Product
 from models.supplier import Supplier
-from fastapi import FastAPI, Header, File
+from fastapi import FastAPI, Header, File, Depends, HTTPException
 
 # Import necessary status codes.
-from starlette.status import HTTP_201_CREATED
+from starlette.status import HTTP_201_CREATED, HTTP_401_UNAUTHORIZED
 from starlette.responses import Response
 
 # This `Body` function allows a variable to be treated as an object,
@@ -27,21 +27,14 @@ from starlette.responses import Response
 # The parameter "embed" is neccesary under reasons explicit on "embed".
 from fastapi import Body
 
-#%---
-app_v1 = FastAPI(openapi_prefix='/v1')
+# Import authentication tools
+from fastapi.security import OAuth2PasswordRequestForm
+from utils.security import authenticate_user, create_jwt_token
 
 #%---
+app_v1 = FastAPI(root_path='/v1')
 
 #%---
-
-# POST /user 
-# IMPORTANT: This is updated below, on advanced cases.
-#@app_v1.post("/user") # endpoint
-#async def post_user(user: User):
-#    return {"request body": user}
-
-#%---
-# Two different types of GET requests:
 
 ## GET /user?password
 ### this version takes the argument as a query parameter
@@ -49,14 +42,6 @@ app_v1 = FastAPI(openapi_prefix='/v1')
 async def get_user_validation(password:str):
     return {"query parameter": password}
 
-#%---
-## GET /product/{ref}
-## this option takes the argument as a path (or an enpoint?)
-## this is just the base. Below, in advance cases, is an implementation
-## of what the func name indicates should do
-#@app_v1.get("/product/{ref}")
-#async def get_product_with_ref(ref:str):
-#    return {"query path parameter": ref}
 
 #%---
 # A combination of these two types into one path+query
@@ -122,12 +107,6 @@ async def get_product_with_ref(ref:str):
 
     return sample_product
 
-#%---
-# accepting files from a post request
-# user loading files
-#@app_v1.post("/user/picture")
-#async def upload_user_picture(profile_picture: bytes = File(...)):
-#    return {"file size": len(profile_picture)}
 
 #%---
 # send custom header to the user and accept files from a post request
@@ -137,3 +116,21 @@ async def upload_user_picture(response: Response, profile_picture: bytes = File(
     response.headers["x-file-size"] = str(len(profile_picture))
     response.set_cookie(key="cookie-api", value="test")
     return {"file size": len(profile_picture)}
+
+# Authorization token generation endpoint
+
+@app_v1.post("/token")
+async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
+    jwt_user_dict = {
+        "username": form_data.username,
+        "password": form_data.password
+    }
+    jwt_user = JWTUser(**jwt_user_dict)
+
+    user = authenticate_user(jwt_user)
+
+    if user is None:
+        raise HTTPException(status_code=HTTP_401_UNAUTHORIZED)
+
+    jwt_token = create_jwt_token(user)
+    return {'token': jwt_token}
