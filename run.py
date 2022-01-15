@@ -13,8 +13,10 @@ run with
 from fastapi import FastAPI, Header, File, Body
 from routes.v1 import app_v1
 from routes.v2 import app_v2
+from routes.old import app_old
 
 app = FastAPI()
 
+app.mount("/old", app_old)
 app.mount("/v1", app_v1)
 app.mount("/v2", app_v2)
