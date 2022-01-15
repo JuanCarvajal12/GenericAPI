@@ -13,3 +13,6 @@ So far, Here I show usage of:
 * Versioning (@ routes/)
 * OAUTH 2.0 Authentication/Authorizations (@ utils/security.py)
     * Auth is required in /v2/user
+* Middleware
+
+Eventually, I will make an extremely verbose documentation of the code here contained, only to have a better understanding of everything.

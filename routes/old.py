@@ -6,12 +6,12 @@ I initially created following the examples of the tutorial course I'm
 following. This is for the sake of note-taking.
 """
 
-from fastapi import FastAPI, File
+from fastapi import FastAPI, File, APIRouter
 from models.user import User
 
 #%---
 
-app_old = FastAPI(root_path='/old')
+app_old = APIRouter()
 
 #%---
 

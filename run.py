@@ -10,13 +10,69 @@ run with
 """
 
 #%---
-from fastapi import FastAPI, Header, File, Body
+from fastapi import FastAPI, Depends, HTTPException
 from routes.v1 import app_v1
 from routes.v2 import app_v2
 from routes.old import app_old
+from starlette.requests import Request
+from starlette.responses import Response
+from starlette.status import HTTP_401_UNAUTHORIZED
+from utils.security import check_jwt_token
+from datetime import datetime
+# Import authentication tools
+from fastapi.security import OAuth2PasswordRequestForm
+from utils.security import authenticate_user, create_jwt_token
+from models.jwt_user import JWTUser
+from utils.const import *
 
-app = FastAPI()
+app = FastAPI(title="GenericAPI", description="Sample API with generic content\
+       and multiple examples", version="0.0.1")
 
-app.mount("/old", app_old)
-app.mount("/v1", app_v1)
-app.mount("/v2", app_v2)
+app.include_router(app_old, prefix="/old", dependencies=[Depends(check_jwt_token)])
+app.include_router(app_v1, prefix="/v1", dependencies=[Depends(check_jwt_token)])
+app.include_router(app_v2, prefix="/v2", dependencies=[Depends(check_jwt_token)])
+
+# Authorization token generation endpoint
+
+@app.post("/token", description=TOKEN_DESCRIPTION, summary=TOKEN_SUMMARY,
+      tags=['Auth'])
+async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
+    jwt_user_dict = {
+        "username": form_data.username,
+        "password": form_data.password
+    }
+    jwt_user = JWTUser(**jwt_user_dict)
+
+    user = authenticate_user(jwt_user)
+
+    if user is None:
+        raise HTTPException(status_code=HTTP_401_UNAUTHORIZED)
+
+    jwt_token = create_jwt_token(user)
+    return {'access_token': jwt_token}
+
+@app.middleware("http")
+async def middleware(request: Request, call_next):
+      start_time = datetime.utcnow()
+      # modify request
+
+      """# Example: requiring auth on all requests with exceptions
+      # This is a bad practice. If done in this manner, the swagger auto-gen
+      # documentation will have flaws. I have a correct implementation.
+      open_paths = ["/token", "/docs", "/openapi.json"]
+      if not any(word in str(request.url) for word in open_paths):
+            try:
+                  jwt_token = request.headers['Authorization'].split(' ')[1]
+                  is_valid = check_jwt_token(jwt_token)
+            except Exception as e:
+                  is_valid = False
+            
+            if not is_valid:
+                  return Response("Unauthorized", status_code=HTTP_401_UNAUTHORIZED)
+      """
+      response = await call_next(request)
+
+      execution_time = (datetime.utcnow() - start_time).microseconds
+      response.headers["x-execution-time"] = str(execution_time)
+      # modify response
+      return response
