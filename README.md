@@ -10,3 +10,6 @@ So far, Here I show usage of:
 * Pydantic models
 * Endpoints with adecuate labeling
 * Testing the endpoints and requests with Insomnia
+* Versioning (@ routes/)
+* OAUTH 2.0 Authentication/Authorizations (@ utils/security.py)
+    * Auth is required in /v2/user
