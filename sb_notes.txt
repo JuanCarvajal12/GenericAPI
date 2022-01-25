@@ -1,3 +1,7 @@
+# Hosting
+I created two machines (droplets) in DigitalOcean. One is ubuntu-database and
+the other is ubuntu-api-server. These host the database and the api server,
+respectively, as can be inferred.
 
 # DB CREATION
 Ran in: root@ubuntu-database:~#

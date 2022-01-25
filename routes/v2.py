@@ -13,7 +13,8 @@ from models.user import User
 from models.product import Product
 from models.supplier import Supplier
 from fastapi import Header, File, Body, APIRouter
-from starlette.status import HTTP_201_CREATED, HTTP_400_BAD_REQUEST # Import necessary status codes.
+from starlette.status import HTTP_201_CREATED, HTTP_400_BAD_REQUEST
+from utils.const import USER_SUMMARY
 from utils.db_functions import (db_get_supplier_with_name, db_insert_personel, 
     db_check_personel, db_get_product_with_ref, db_get_supplier_with_id,
     db_patch_supplier_name)
@@ -29,7 +30,8 @@ app_v2 = APIRouter()
 ## ADDED FUNCTIONALITY: Now this function requires authentication and authori-
 ## zation. In the header of the request, should appear the Authorization entry
 ## with value "Bearer <token>". The token is generated with POST -> /v1/token.
-@app_v2.post("/user", status_code=HTTP_201_CREATED, tags=["User"]) # endpoint
+@app_v2.post("/user", status_code=HTTP_201_CREATED, tags=["User"],
+summary=USER_SUMMARY) # endpoint
 async def post_user(user: User):
     await db_insert_personel(user)
     return {"result": "personel is created"}
@@ -80,14 +82,14 @@ async def get_suppliers_products(id: int, order: str = 'asc'):
 
 #%---
 # PATCH /supplier/{id}/name
-@app_v2.patch("/supplier/{id}/name")
+@app_v2.patch("/supplier/{id}/name", tags=["Supplier"])
 async def patch_supplier_name(id: int,  name: str = Body(...,embed=True)):
     await db_patch_supplier_name(id, name)
     return {"result": "name is updated"}
 
 #%---
 # POST /user/picture
-@app_v2.post("/user/picture")
+@app_v2.post("/user/picture", tags=['Supplier'])
 async def upload_user_picture(response: Response, profile_picture: bytes = File(...)):
     await upload_image_to_server(profile_picture)
     return {"file size": len(profile_picture)}

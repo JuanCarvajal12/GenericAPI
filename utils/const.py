@@ -9,6 +9,7 @@ JWT_EXPIRATION_TIME_MINUTES = 60*24*5
 TOKEN_DESCRIPTION = "description sample for the /token"
 TOKEN_SUMMARY = "token summary sample"
 REF_DESCRIPTION = "sample description for a field"
+USER_SUMMARY = "Create new User in personel"
 
 # database
 
