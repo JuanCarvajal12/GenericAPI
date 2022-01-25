@@ -5,4 +5,4 @@ from typing import List
 class Supplier(BaseModel):
     id: int
     name: str
-    product: List[str]
+    products: List[str]
