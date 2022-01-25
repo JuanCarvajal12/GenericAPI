@@ -24,6 +24,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from utils.security import authenticate_user, create_jwt_token
 from models.jwt_user import JWTUser
 from utils.const import *
+from utils.db_object import db
 
 app = FastAPI(title="GenericAPI", description="Sample API with generic content\
        and multiple examples", version="0.0.1")
@@ -32,6 +33,13 @@ app.include_router(app_old, prefix="/old", dependencies=[Depends(check_jwt_token
 app.include_router(app_v1, prefix="/v1", dependencies=[Depends(check_jwt_token)])
 app.include_router(app_v2, prefix="/v2", dependencies=[Depends(check_jwt_token)])
 
+@app.on_event("startup")
+async def connect_db():
+      await db.connect()
+
+@app.on_event("shutdown")
+async def disconnect_db():
+      await db.disconnect()
 # Authorization token generation endpoint
 
 @app.post("/token", description=TOKEN_DESCRIPTION, summary=TOKEN_SUMMARY,
@@ -43,7 +51,7 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
     }
     jwt_user = JWTUser(**jwt_user_dict)
 
-    user = authenticate_user(jwt_user)
+    user = await authenticate_user(jwt_user)
 
     if user is None:
         raise HTTPException(status_code=HTTP_401_UNAUTHORIZED)
@@ -58,7 +66,8 @@ async def middleware(request: Request, call_next):
 
       """# Example: requiring auth on all requests with exceptions
       # This is a bad practice. If done in this manner, the swagger auto-gen
-      # documentation will have flaws. I have a correct implementation.
+      # documentation will have flaws. I have a correct implementation using
+      # APIRouter's.
       open_paths = ["/token", "/docs", "/openapi.json"]
       if not any(word in str(request.url) for word in open_paths):
             try:

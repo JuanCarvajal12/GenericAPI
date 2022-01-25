@@ -2,25 +2,22 @@
 @Carva
 """
 
+from http.client import HTTPException
+from starlette.status import HTTP_401_UNAUTHORIZED
 from passlib.context import CryptContext
 from models.jwt_user import JWTUser
 from datetime import datetime, timedelta
 from utils.const import JWT_EXPIRATION_TIME_MINUTES, JWT_ALGORITHM, JWT_SECRET_KEY
 import jwt
-from fastapi import Depends, HTTPException
+from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer
 import time
-from starlette.status import HTTP_401_UNAUTHORIZED
+from utils.db_functions import db_check_token_user, db_check_jwt_username
 
 pwd_context = CryptContext(schemes=['bcrypt'])
 oauth_schema = OAuth2PasswordBearer(tokenUrl='/token')
 
-jwt_user_sample = {
-    'username': 'sample_user',
-    'password': '$2b$12$HYmFBD9ekxfp5w/OAGfn2un1iCTgeG3buSJ10B/sOObHUlEhhdplu',
-    'disabled': False,
-    'role': 'admin'}
-jwt_user_sample = JWTUser(**jwt_user_sample)
+
 
 
 def get_hashed_password(password):
@@ -34,11 +31,16 @@ def verify_password(plain_password, hashed_password):
 
 # Authenticate username and pw to gen JWT token
 
-def authenticate_user(user: JWTUser):
-    if jwt_user_sample.username == user.username:
-        if verify_password(user.password,jwt_user_sample.password):
-            user.role = 'admin'
-            return user
+async def authenticate_user(user: JWTUser):
+    potential_users = await db_check_token_user(user)
+    is_valid = False
+    for db_user in potential_users:
+        if verify_password(user.password, db_user['password']):
+            is_valid = True
+    if is_valid:
+        user.role = 'admin'
+        return user
+
     return None
 
 # Create access JWT token
@@ -53,7 +55,7 @@ def create_jwt_token(user: JWTUser):
     return jwt_token
 
 # Verify JWT token
-def check_jwt_token(token: str = Depends(oauth_schema)):
+async def check_jwt_token(token: str = Depends(oauth_schema)):
     try:
         jwt_payload = jwt.decode(token, JWT_SECRET_KEY, algorithms = JWT_ALGORITHM)
         username = jwt_payload.get("sub")
@@ -61,16 +63,19 @@ def check_jwt_token(token: str = Depends(oauth_schema)):
         expiration = jwt_payload.get("exp")
 
         if time.time() < expiration:
-            if jwt_user_sample.username == username:
+            is_valid = await db_check_jwt_username(username)
+            if is_valid:
                 return final_checks(role)
     except Exception as e:
-        return False
+        raise HTTPException(status_code=HTTP_401_UNAUTHORIZED)
     
-    return False
+    raise HTTPException(status_code=HTTP_401_UNAUTHORIZED)
 
 # Authorization
 def final_checks(role: str):
     if role == "admin":
         return True
     else:
-        return False
+        raise HTTPException(status_code=HTTP_401_UNAUTHORIZED)
+
+# print(get_hashed_password("secret"))
