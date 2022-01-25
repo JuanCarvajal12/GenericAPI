@@ -25,6 +25,8 @@ from utils.security import authenticate_user, create_jwt_token
 from models.jwt_user import JWTUser
 from utils.const import *
 from utils.db_object import db
+import utils.redis_obj as re
+import aioredis
 
 app = FastAPI(title="GenericAPI", description="Sample API with generic content\
        and multiple examples", version="0.0.1")
@@ -36,10 +38,15 @@ app.include_router(app_v2, prefix="/v2", dependencies=[Depends(check_jwt_token)]
 @app.on_event("startup")
 async def connect_db():
       await db.connect()
+      re.redis = await aioredis.create_redis_pool(REDIS_URL)
 
 @app.on_event("shutdown")
 async def disconnect_db():
       await db.disconnect()
+      re.redis.close()
+      await re.redis.wait_closed()
+
+
 # Authorization token generation endpoint
 
 @app.post("/token", description=TOKEN_DESCRIPTION, summary=TOKEN_SUMMARY,

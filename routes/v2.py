@@ -20,6 +20,8 @@ from utils.db_functions import (db_get_supplier_with_name, db_insert_personel,
     db_patch_supplier_name)
 from starlette.responses import Response
 from utils.helper_functions import upload_image_to_server
+import utils.redis_obj as re
+import pickle
 
 #%---
 app_v2 = APIRouter()
@@ -41,8 +43,21 @@ async def post_user(user: User):
 ## POST /login
 @app_v2.post("/login", tags=['User']) # /user?password=*****
 async def get_user_validation(username: str = Body(...), password: str = Body(...)):
-    result = await db_check_personel(username, password)
-    return {"IS_VALID": result}
+    # look in cache
+    redis_key = f"login,{username},{password}"
+    result = await re.redis.get(redis_key) # search in cache first with key
+
+    if result: # redis has data
+        if result==b"True":
+            return {"IS_VALID (redis)": True}
+        else:
+            return {"IS_VALID (redis)": False}
+    else: # redis has not this data
+        # check in the database
+        result = await db_check_personel(username, password)
+        # save in cache with key (notice expiration time)
+        await re.redis.set(redis_key, str(result), expire=10)
+        return {"IS_VALID (db)": result}
 
 #%---
 # GET /product/{ref}
@@ -52,14 +67,23 @@ async def get_user_validation(username: str = Body(...), password: str = Body(..
         tags=['Product']
 )
 async def get_product_with_ref(ref:str):
+    # look in cache
+    redis_key = f"prodw,{ref}"
+    result = await re.redis.get(redis_key)
 
-    product = await db_get_product_with_ref(ref)
-    supplier_name = product['supplier']
-    supplier = await db_get_supplier_with_name(supplier_name)
-    supplier_instance = Supplier(**supplier)
-    product['supplier'] = supplier_instance
-    result_product = Product(**product)
-    return result_product
+    if result: # if in cache
+        result_product = pickle.loads(result)
+        return result_product
+    else:
+        # get data from the database
+        product = await db_get_product_with_ref(ref)
+        supplier = await db_get_supplier_with_name(product['supplier'])
+        supplier_instance = Supplier(**supplier)
+        product['supplier'] = supplier_instance
+        result_product = Product(**product)
+        # cache the data. Storing it as a pickle allows for a simple encryption
+        await re.redis.set(redis_key, pickle.dumps(result_product))
+        return result_product
 
 #%---
 ## GET /supplier/{id}/product?order

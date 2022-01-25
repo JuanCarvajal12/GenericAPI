@@ -1,0 +1,23 @@
+# connect to the cloud machine
+~$ ssh root@147.182.143.7
+
+# in the cloud machine
+> root@ubuntu-database:~# 
+
+## create the docker container for the redis service
+~# docker run --name gapi-redis -p 6379:6379 -d redis
+
+note: option -p 6379:6379 made the port accesible to localhost.
+
+## check the current images just to verify
+~# docker ps
+
+# in my machine
+## forward the port to my localhost from the db-server
+~$ ssh -L 6379:localhost:6379 -N -f -l root 147.182.143.7
+
+## check the ports
+Option 1:
+~$ netstat -tulpn
+Option 2:
+~$ lsof -i tcp:6379

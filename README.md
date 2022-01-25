@@ -27,5 +27,9 @@ So far I have used/done:
     * SSH Authentication
 * Connected the endpoints to a database
 * Validation (just by using the correct sintax with `pydantic`, `typing`, `enum`, etc)
+* Cache-ing with reddis
+* Asyncronous tasks are handled with
+    * asyncio (`await` command)
+    * aioredis (is the lib to handle reddis)
 
 Eventually, I might make an extremely verbose documentation to the code here contained, only to have a better understanding of everything if I see fit.
