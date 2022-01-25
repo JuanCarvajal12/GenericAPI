@@ -1,0 +1,26 @@
+
+# DB CREATION
+Ran in: root@ubuntu-database:~#
+machine: digital droplet
+
+~# docker run --name=genericapi-db -e POSTGRES_USER=juan -e POSTGRES_PASSWORD=Juan1234 -e POSTGRES_DB=genericapi -p 5432:5432 -d postgres:10
+
+"""
+~# docker ps
+~# docker stop genericapi-db
+~# docker rm genericapi-db
+~# docker ps
+"""
+
+# CONNECTING TO THE DATABASE FROM pgadmin4
+Ran in: (base) carva@Carva-Lenovo-Legion-5-15ARH05H:~$
+
+~$ ssh -L 5432:localhost:5432 -N -f -l root 147.182.143.7
+
+# Check the ports info
+
+netstat -tulpn
+
+## Check dbdiagram.io
+
+## The tables are created directly in Data Grip or pgadmin4 
