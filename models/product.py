@@ -8,4 +8,4 @@ class Product(BaseModel):
     name: str
     category: str
     supplier: Supplier
-    year: int = Field(2000, lt=1990, gt=2022)
+    year: int = Field(2000, gt=1990, lt=2022)
