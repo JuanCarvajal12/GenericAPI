@@ -1,6 +1,6 @@
 # import asyncio
 from utils.db_object import db
-
+from utils.const import TESTING, TEST_DB_URL
 # Tested execute function with this query
 # query = "insert into products values(:ref, :name, :category, :supplier, :year)"
 
@@ -10,18 +10,26 @@ from utils.db_object import db
 # values_o = {'ref': 'ref1', "name": 'prod1', "category": 'cat1', "supplier": "supplier1", "year": 2019}
 
 async def execute(query, is_many,values=None):
+    if TESTING:
+        await db.connect()
+    
     if is_many:
         await db.execute_many(query=query, values=values)
     else:
         await db.execute(query=query, values=values)
 
+    if TESTING:
+        await db.disconnect()
 # tested fetch function with this query
 
-query_1 = "SELECT * FROM products WHERE ref=:ref"
-query_2 = "SELECT * FROM products"
-values = {"ref": "ref1"}
+# query_1 = "SELECT * FROM products WHERE ref=:ref"
+# query_2 = "SELECT * FROM products"
+# values = {"ref": "ref1"}
 
 async def fetch(query, is_one, values=None):
+    if TESTING:
+        await db.connect()
+
     if is_one:
         result = await db.fetch_one(query=query, values=values)
         if result is None:
@@ -36,6 +44,9 @@ async def fetch(query, is_one, values=None):
             out = []
             for row in result:
                 out.append(dict(row))
+
+    if TESTING:
+        await db.disconnect()
     return out
 
 # loop = asyncio.get_event_loop()

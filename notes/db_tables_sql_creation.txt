@@ -1,0 +1,37 @@
+CREATE TABLE IF NOT EXISTS public.personel
+(
+    id serial NOT NULL,
+    username text,
+    password text,
+    mail text,
+    role text,
+    CONSTRAINT personel_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS public.products
+(
+    ref text NOT NULL,
+    name text ,
+    category text ,
+    supplier text ,
+    year integer,
+    CONSTRAINT products_pkey PRIMARY KEY (ref)
+);
+
+CREATE TABLE IF NOT EXISTS public.suppliers
+(
+    id integer NOT NULL ,
+    name text ,
+    products text[] ,
+    CONSTRAINT suppliers_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS public.users
+(
+    id serial NOT NULL,
+    username text,
+    password text ,
+    mail text ,
+    role text ,
+    CONSTRAINT users_pkey PRIMARY KEY (id)
+)

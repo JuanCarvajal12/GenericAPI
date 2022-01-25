@@ -27,13 +27,17 @@ from utils.const import *
 from utils.db_object import db
 import utils.redis_obj as re
 import aioredis
+from utils.redis_obj import check_test_redis
 
 app = FastAPI(title="GenericAPI", description="Sample API with generic content\
        and multiple examples", version="0.0.1")
 
-app.include_router(app_old, prefix="/old", dependencies=[Depends(check_jwt_token)])
-app.include_router(app_v1, prefix="/v1", dependencies=[Depends(check_jwt_token)])
-app.include_router(app_v2, prefix="/v2", dependencies=[Depends(check_jwt_token)])
+app.include_router(app_old, prefix="/old",
+      dependencies=[Depends(check_jwt_token), Depends(check_test_redis)])
+app.include_router(app_v1, prefix="/v1",
+      dependencies=[Depends(check_jwt_token), Depends(check_test_redis)])
+app.include_router(app_v2, prefix="/v2",
+      dependencies=[Depends(check_jwt_token), Depends(check_test_redis)])
 
 @app.on_event("startup")
 async def connect_db():

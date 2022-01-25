@@ -1,0 +1,11 @@
+# close the ports that previously connected to the cloud server if they still ran.
+To see all the ports in use:
+~$ netstat -tulpn
+To kill a certain connection:
+~$ kill <pid>
+
+# locally creating a testing db
+~$ docker run --name=test-db -e POSTGRES_USER=test -e POSTGRES_PASSWORD=test -e POSTGRES_DB=test -p 5432:5432 -d postgres:10
+
+# locally creating a testing cache with redis
+~$ docker run --name test-redis -p 6379:6379 -d redis
