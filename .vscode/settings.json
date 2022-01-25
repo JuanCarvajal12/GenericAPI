@@ -1,15 +1,15 @@
 {
+    "python.defaultInterpreterPath": "/home/carva/anaconda3/envs/fastapidev/bin/python",
+    "python.autoComplete.extraPaths": [
+        "/home/carva/OneDrive/udemy/fastAPI/GenericAPI"
+    ],
+    "python.analysis.extraPaths": [
+        "/home/carva/OneDrive/udemy/fastAPI/GenericAPI"
+    ],
+    "terminal.integrated.cwd":"/home/carva/OneDrive/udemy/fastAPI/GenericAPI",
     "python.testing.pytestArgs": [
         "tests"
     ],
     "python.testing.unittestEnabled": false,
     "python.testing.pytestEnabled": true,
-    "python.testing.unittestArgs": [
-        "-v",
-        "-s",
-        "./tests",
-        "-p",
-        "*test*.py"
-    ],
-    "python.defaultInterpreterPath": "/home/carva/anaconda3/envs/fastapidev/bin/python"
 }
