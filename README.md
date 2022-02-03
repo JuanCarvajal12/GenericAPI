@@ -41,4 +41,7 @@ So far I have used/done:
 * load testing with Locust
 * Deploying an API to production environment
 
+----
+Should review lessons 33, 35, 36 and 37 eventually if necessary.
+
 Eventually, I might make an extremely verbose documentation to the code here contained, only to have a better understanding of everything if I see fit.
