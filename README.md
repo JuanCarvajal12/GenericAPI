@@ -43,7 +43,9 @@ So far I have used/done:
    * I hosted the servers (database+cache server and api server) as DigitalOcean Droplets.
 
 ----
-Should review lessons 33, 35, 36 and 37 eventually if necessary.
+Should review lessons 33, 35, 36 and 37 eventually if necessary. Altough not implemented, also saw:
+
+* Load balancing
 
 Eventually, I might make an extremely verbose documentation to the code here contained, only to have a better understanding of everything if I see fit.
 Eventually, I might make an extremely verbose documentation to the code here contained, only to have a better understanding of everything if I see fit.
