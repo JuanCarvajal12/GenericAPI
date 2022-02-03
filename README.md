@@ -2,7 +2,7 @@
 
 Generic API using FastAPI. Mainly following the Udemy course [Complete Backend (API) Development with Python A-Z™](https://www.udemy.com/course/python-api-development/).
 
-This repo is part of my portfolio and showcases my habilities in backend development.
+This repo is part of my portfolio and showcases my habilities in backend development. This API is big; might be good to have a smaller one for the portfolio.
 
 The software I use to:
 * VSCode for coding
