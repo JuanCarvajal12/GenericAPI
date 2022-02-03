@@ -38,7 +38,8 @@ So far I have used/done:
     * aioredis (is the lib to handle reddis)
 * Endpoint testing
     * pytest in VSCode
-* load testing with Locust
-* Deploying an API to production environment
+* Load testing with Locust
+* Deploying an API to production environment.
+   * I hosted the servers (database+cache server and api server) as DigitalOcean Droplets.
 
 Eventually, I might make an extremely verbose documentation to the code here contained, only to have a better understanding of everything if I see fit.
