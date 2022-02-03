@@ -38,5 +38,7 @@ So far I have used/done:
     * aioredis (is the lib to handle reddis)
 * Endpoint testing
     * pytest in VSCode
+* load testing with Locust
+* Deploying an API to production environment
 
 Eventually, I might make an extremely verbose documentation to the code here contained, only to have a better understanding of everything if I see fit.

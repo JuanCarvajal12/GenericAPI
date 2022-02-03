@@ -9,3 +9,15 @@ To kill a certain connection:
 
 # locally creating a testing cache with redis
 ~$ docker run --name test-redis -p 6379:6379 -d redis
+
+# stopping and starting containers 
+
+~$ sudo docker stop <container-name>
+~$ sudo docker start <container-name>
+~$ sudo docker restart <container-name>
+
+# locust load testing
+
+GenericAPI$ locust -f ./tests/locust_load_test.py 
+
+## at the web browser: http://localhost:8089/
