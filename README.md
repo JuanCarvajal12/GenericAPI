@@ -2,7 +2,7 @@
 
 Generic API using FastAPI. Mainly following the Udemy course [Complete Backend (API) Development with Python A-Z™](https://www.udemy.com/course/python-api-development/).
 
-This repo is part of my portfolio and showcases my habilities in backend development.
+This repo is part of my portfolio and showcases my habilities in backend development. This API is big; might be good to have a smaller one for the portfolio.
 
 The software I use to:
 * VSCode for coding
@@ -38,10 +38,12 @@ So far I have used/done:
     * aioredis (is the lib to handle reddis)
 * Endpoint testing
     * pytest in VSCode
-* load testing with Locust
-* Deploying an API to production environment
+* Load testing with Locust
+* Deploying an API to production environment.
+   * I hosted the servers (database+cache server and api server) as DigitalOcean Droplets.
 
 ----
 Should review lessons 33, 35, 36 and 37 eventually if necessary.
 
+Eventually, I might make an extremely verbose documentation to the code here contained, only to have a better understanding of everything if I see fit.
 Eventually, I might make an extremely verbose documentation to the code here contained, only to have a better understanding of everything if I see fit.
