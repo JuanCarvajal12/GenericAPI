@@ -1,0 +1,16 @@
+# connecting to the api server
+~$ ssh root@137.184.133.59
+
+# copying the dockerfile
+
+~# mkdir genericapi
+~/OneDrive/udemy/fastAPI$ scp -r GenericAPI/ root@137.184.133.59:~/genericapi
+
+# install docker in api server
+# see: https://docs.docker.com/engine/install/ubuntu/
+
+# build the docker file
+
+root@ubuntu-api-server:~/genericapi/GenericAPI# docker build -t genericapi-build .
+
+root@ubuntu-api-server:~/genericapi/GenericAPI# docker run --name=GenericAPI -idt -e MODULE_NAME="run" -e PORT="3000" -e PRODUCTION=true -p 3000:3000 genericapi-build
